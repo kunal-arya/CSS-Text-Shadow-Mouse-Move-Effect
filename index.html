@@ -35,6 +35,52 @@
   }
   </style>
 <script>
+    const hero = document.querySelector(".hero");
+    const text = hero.querySelector("h1");
+    const walk = 500; // 100px
+
+    function shadow(e) {
+        const {offsetWidth: width, offsetHeight: height} = hero;
+        let {offsetX: x , offsetY: y} = e;
+        
+        // we are changing the x and y here because even though we are listening for the hero element x and y 
+        // BUT if we hover over child element of hero, it will give us child element (h1 in our case) offsetX and offsetY 
+        
+        // SOLUTION: If the thing that we are hovering is h1 instead of the hero , then modify x and y values 
+        // so that, they can be consistent all accross
+        
+        // The "target" is going to be the thing that it actually triggered on, whereas "this" is going to be the thing that
+        // So it's always going to be hero for "this" but the target, what it got triggered on will sometimes change
+
+        // so , if you console.log(this, e.target) and hover you will find-  
+        // this => <div> with class of hero
+        // e.target => "h1" child of hero
+        if(this !== e.target) {
+            x += e.target.offsetLeft;
+            y += e.target.offsetTop;
+        }
+
+        // if 100 is as high as we'll go, 0 is not as low as we'll go, if 100 is our walk, then 50 should be 
+        // as high as we go and negative 50 is as low as we should go. So our walk is 100 but we
+        // want to go from 50 to negative 50, and that's what this little bit of math is doing for us here. 
+        // It's sort of offsetting it so we go to plus 50 and negative 50 instead of 0 and plus 100. 
+        
+        const xWalk = Math.round(( x / width * walk ) - (walk / 2));
+        
+        //Then we can just swap out this x walk, y, with this is going to be height
+        const yWalk = Math.round(( y / height * walk ) - ( walk / 2));
+
+        // changing text shadow
+        text.style.textShadow = `
+            ${xWalk}px ${yWalk}px 0 rgba(255,0,255,0.7),
+            ${xWalk * -1}px ${yWalk}px 0 rgba(0,255,255,0.7),
+            ${yWalk}px ${xWalk * -1}px 0 rgba(0,255,0,0.7),
+            ${yWalk * -1}px ${xWalk}px 0 rgba(0,0,255,0.7)
+            ` ;
+        
+    }
+
+    hero.addEventListener("mousemove", shadow);
 </script>
 </body>
 </html>
